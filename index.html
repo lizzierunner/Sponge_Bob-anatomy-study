@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧽 Bikini Bottom Anatomy Academy — College Final Mode</title>
+  <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ocean:#0077b6;
+      --deep:#023e8a;
+      --aqua:#00b4d8;
+      --sand:#f4d35e;
+      --coral:#ee6c4d;
+      --seaweed:#52b788;
+      --white:#ffffff;
+      --dark:#0b2545;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg,var(--deep) 0%,var(--ocean) 40%,var(--aqua) 100%);
+      color:var(--white);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      min-height:100vh;
+      padding:24px 12px;
+    }
+
+    /* reduced motion utility */
+    .reduced-motion *{animation:none !important;transition:none !important}
+
+      /* Main card */
+      .card{background:linear-gradient(180deg,#ffffff 0%, #fbfbff 100%);color:var(--dark);border-radius:18px;padding:22px;box-shadow:0 14px 40px rgba(0,0,0,0.25);min-height:220px}
+      .topic-label{display:inline-block;background:var(--aqua);color:#003;padding:4px 10px;border-radius:999px;font-weight:900;font-size:12px}
+      .question-num{color:#6b7280;font-weight:800;margin-top:6px}
+      .question-text{font-size:20px;font-weight:900;margin:10px 0 18px}
+
+      /* Answers grid */
+      .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+      @media(max-width:600px){.answers{grid-template-columns:1fr}}
+      .answer-btn{background:#f6f9ff;border:1px solid #e6eefc;padding:12px;border-radius:12px;font-weight:800;cursor:pointer;text-align:left}
+      .answer-btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.08)}
+      .answer-btn.correct{background:#d4f7e0;border-color:#52b788}
+      .answer-btn.wrong{background:#ffe6e0;border-color:#ff8a65}
+
+      .feedback{margin-top:12px;padding:12px;border-radius:10px;display:none}
+      .feedback.show{display:block}
+      .feedback.correct{background:#d4f7e0;color:#1a6640}
+      .feedback.wrong{background:#ffe6e0;color:#8b2500}
+
+      .actions{display:flex;gap:8px;margin-top:14px}
+      .primary{background:linear-gradient(135deg,var(--sand),var(--coral));color:#fff;border:none;padding:12px 14px;border-radius:12px;font-weight:900;cursor:pointer}
+      .ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:10px 12px;border-radius:10px;cursor:pointer}
+
+      /* Flashcard */
+      .flashcard{display:flex;align-items:center;justify-content:center;height:200px;font-size:20px;font-weight:800}
+      .card-front,.card-back{backface-visibility:hidden;transition:transform .45s;transform-style:preserve-3d}
+      .card-inner{position:relative}
+
+      /* end screen */
+      .end-screen{display:none;text-align:center;padding:18px}
+      .end-screen.show{display:block}
+
+      footer{margin-top:18px;text-align:center;color:rgba(255,255,255,0.75);font-size:13px}
+    </style>
+  
+  </head>
+  <body>
+
+    <div class="container">
+      <header>
+        <div class="brand">
+          <div class="mascot">🧽</div>
+          <div>
+            <h1>Bikini Bottom Anatomy Academy</h1>
+            <div class="sub">College Final Mode — short bursts, big brain energy</div>
+          </div>
+        </div>
+
+        <div class="controls" aria-hidden="false">
+          <div class="control mode-select" id="modeSelect">
+            <button class="small" data-mode="quiz">Quiz</button>
+            <button class="small" data-mode="flash">Flashcards</button>
+            <button class="small" data-mode="rapid">Rapid-Fire</button>
+          </div>
+          <div class="control small" id="timerControl">Sprint: <span id="timerLabel">15:00</span> <button id="timerBtn" class="small">Start</button> <button id="timerReset" class="small">Reset</button></div>
+          <div class="control small" id="focusToggle">Focus: <label><input type="checkbox" id="reduceMotion"> Reduce Motion</label></div>
+        </div>
+      </header>
+
+      <div class="top-stats">
+        <div id="qCounter">Question 1 of 0</div>
+        <div class="right-controls">
+          <div class="score-badge">⭐ <span id="scoreDisplay">0</span></div>
+          <div class="progress-small progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+        </div>
+      </div>
+
+      <nav class="topic-nav" id="topicNav">
+        <button class="topic-btn active" data-topic="all">🌊 All Topics</button>
+        <button class="topic-btn" data-topic="skeletal">🦴 Skeletal</button>
+        <button class="topic-btn" data-topic="muscular">💪 Muscular</button>
+        <button class="topic-btn" data-topic="nervous">🧠 Nervous</button>
+        <button class="topic-btn" data-topic="cardiovascular">❤️ Cardiovascular</button>
+        <button class="topic-btn" data-topic="digestive">🥣 Digestive</button>
+        <button class="topic-btn" data-topic="respiratory">🌬️ Respiratory</button>
+      </nav>
+
+    <main id="mainCard" class="card" role="main">
+    <div class="flex-between">
+          <div>
+            <span class="topic-label" id="topicLabel">All</span>
+            <div class="question-num" id="questionNum">Question 1</div>
+          </div>
+    <div class="mode-label">Mode: <strong id="currentMode">Quiz</strong></div>
+        </div>
+
+        <div id="quizArea">
+          <div class="question-text" id="questionText">Loading...</div>
+
+          <div id="answersGrid" class="answers" aria-live="polite"></div>
+
+    <div id="flashcardArea" class="hidden">
+            <div class="flashcard" id="flashcardInner">
+              <div class="card-inner" id="cardInner">Front</div>
+            </div>
+            <div class="actions">
+              <button class="ghost" id="flipBtn">Flip</button>
+              <button class="primary" id="markBtn">Mark for Review</button>
+            </div>
+          </div>
+
+          <div class="feedback" id="feedback"></div>
+
+    <div class="actions mt-14">
+            <button class="ghost" id="hintBtn">Hint / Mnemonic</button>
+            <button class="ghost" id="skipBtn">Skip</button>
+            <button class="primary hidden" id="nextBtn">Next</button>
+          </div>
+        </div>
+      
+        <div class="end-screen" id="endScreen">
+    <div class="big-emoji">🧽</div>
+          <h2 id="endTitle">You Did It!</h2>
+          <p id="endMessage">Excellent sprint — review the weak spots and repeat.</p>
+    <div id="finalScore" class="final-score-large">0 pts</div>
+    <div id="finalFraction" class="muted"></div>
+    <div class="mt-12"><button class="primary" id="restartBtn">🔄 Start New Sprint</button></div>
+        </div>
+
+      </main>
+
+      <footer>🐚 Built for focus — short sessions, immediate feedback, and SpongeBob energy.</footer>
+    </div>
+
+    <script>
+      /* ---------- Data (questions) ---------- */
+      // Questions now include an `explanation` for college-level detail and an optional `hint` mnemonic.
+      const ALL_QUESTIONS = [
+        { topic: 'skeletal', q: 'How many bones are in the adult human skeleton, and why does the count differ from infants?', a:['206 — fusion with age','Approximately 270 — adults have more','About 190 — due to bone loss','There is no fixed number'], correct:0, explanation:'Adults typically have 206 bones; infants have more (~270) because some bones (e.g., skull sutures, long bone epiphyses) fuse during development.', hint:'Remember: infants have extra pieces that "fuse up" as they grow.' },
+        { topic: 'skeletal', q: 'Which bone transmits weight from the hip to the knee and articulates with the acetabulum?', a:['Femur','Tibia','Fibula','Pelvis'], correct:0, explanation:'The femur transmits body weight through the hip joint (acetabulum) to the knee (distal femur articulates with tibia).', hint:'Think thigh = femur.' },
+        { topic: 'muscular', q: 'What muscle group primarily performs hip extension during running?', a:['Gluteus maximus','Quadriceps','Hamstrings','Iliopsoas'], correct:2, explanation:'Hamstrings and gluteus maximus both contribute; hamstrings act eccentrically then concentrically during late swing and stance; gluteus maximus is primary hip extensor during forceful extension.', hint:'Powerful backward leg drive = gluteus + hamstrings.' },
+        { topic: 'muscular', q: 'Which muscle contracts to increase thoracic volume during quiet inspiration?', a:['Diaphragm','Internal intercostals','Rectus abdominis','Latissimus dorsi'], correct:0, explanation:'The diaphragm contracts and flattens, increasing vertical thoracic volume; external intercostals assist by elevating ribs.', hint:'Diaphragm = dome that flattens.' },
+        { topic: 'nervous', q: 'What part of the neuron typically receives synaptic input and integrates signals?', a:['Dendrites','Axon hillock','Axon','Synaptic bouton'], correct:0, explanation:'Dendrites receive synaptic inputs; the axon hillock integrates and initiates action potentials when threshold is reached.', hint:'Dendrites = branches that RECEIVE.' },
+        { topic: 'nervous', q: 'Which brain region is essential for procedural motor learning and balance?', a:['Cerebellum','Cerebrum','Hypothalamus','Medulla'], correct:0, explanation:'The cerebellum refines motor actions and supports balance and procedural learning.', hint:'Cerebellum = coordination center.' },
+        { topic: 'cardiovascular', q: 'Trace the path of deoxygenated blood returning from the body to the point it becomes oxygenated.', a:['Vena cava → right atrium → right ventricle → pulmonary artery → lungs','Left atrium → left ventricle → aorta → body','Right atrium → left atrium → lungs → aorta','Pulmonary vein → left atrium → left ventricle → lungs'], correct:0, explanation:'Systemic venous blood returns via the vena cavae to the right atrium → right ventricle → pulmonary artery → pulmonary capillaries (lungs) where gas exchange oxygenates it.', hint:'Right side of heart sends blood to lungs.' },
+        { topic: 'cardiovascular', q: 'Which vessel has the highest pressure under normal resting conditions?', a:['Aorta','Superior vena cava','Pulmonary artery','Capillaries'], correct:0, explanation:'The aorta, directly downstream of the left ventricle, has the highest systemic arterial pressure.', hint:'Aorta = pressure powerhouse.' },
+        { topic: 'digestive', q: 'Which section of the small intestine is primarily responsible for iron absorption?', a:['Duodenum','Jejunum','Ileum','Colon'], correct:0, explanation:'The duodenum is the primary site for iron absorption; most other nutrients are absorbed in the jejunum and ileum.', hint:'D for Duodenum = Dietary iron.' },
+        { topic: 'digestive', q: 'What organ secretes enzymes (amylase, lipase, proteases) into the duodenum to aid digestion?', a:['Pancreas','Liver','Stomach','Spleen'], correct:0, explanation:'The pancreas secretes digestive enzymes into the duodenum via the pancreatic duct; the liver produces bile (emulsifier).', hint:'Pancreas = enzyme factory.' },
+        { topic: 'respiratory', q: 'Where does gas exchange primarily occur and what structural features facilitate it?', a:['Alveoli — large surface area and thin epithelium','Bronchioles — cartilage rings','Trachea — ciliated epithelium','Pleura — serous membrane'], correct:0, explanation:'Alveoli provide massive surface area and thin type I pneumocytes for diffusion; capillary network closely apposes the alveolar wall.', hint:'Alveoli = tiny balloons for exchange.' },
+        { topic: 'respiratory', q: 'What muscle action and pressure change drive passive expiration at rest?', a:['Elastic recoil of lung tissue and increased intrathoracic pressure','Active diaphragmatic contraction','Intercostal muscle shortening','Abdominal contraction raising diaphragm'], correct:0, explanation:'At rest, passive expiration is driven by elastic recoil of lungs and chest wall returning to resting position, increasing intrathoracic pressure and expelling air.', hint:'Exhale = relax, recoil.' },
+      ];
+
+      /* ---------- State ---------- */
+      let currentMode = 'quiz'; // quiz | flash | rapid
+      let currentTopic = 'all';
+      let pool = []; // current shuffled question pool
+      let currentIndex = 0;
+      let score = 0;
+      let streak = 0;
+      let answered = false;
+      let reviewSet = new Set();
+
+      /* ---------- Util ---------- */
+      function shuffle(arr){return arr.slice().sort(()=>Math.random()-0.5)}
+
+      /* ---------- UI refs ---------- */
+      const questionText = document.getElementById('questionText');
+      const answersGrid = document.getElementById('answersGrid');
+      const progressBar = document.getElementById('progressBar');
+      const qCounter = document.getElementById('qCounter');
+      const scoreDisplay = document.getElementById('scoreDisplay');
+      const topicLabel = document.getElementById('topicLabel');
+      const questionNum = document.getElementById('questionNum');
+      const feedback = document.getElementById('feedback');
+      const nextBtn = document.getElementById('nextBtn');
+      const hintBtn = document.getElementById('hintBtn');
+      const skipBtn = document.getElementById('skipBtn');
+      const flipBtn = document.getElementById('flipBtn');
+      const markBtn = document.getElementById('markBtn');
+      const flashcardArea = document.getElementById('flashcardArea');
+      const flashcardInner = document.getElementById('cardInner');
+      const flashcardWrapper = document.getElementById('flashcardArea');
+      const endScreen = document.getElementById('endScreen');
+      const finalScore = document.getElementById('finalScore');
+      const finalFraction = document.getElementById('finalFraction');
+      const restartBtn = document.getElementById('restartBtn');
+      const currentModeLabel = document.getElementById('currentMode');
+
+      /* ---------- Mode / topic wiring ---------- */
+      document.getElementById('modeSelect').addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if(!btn) return;
+        const mode = btn.dataset.mode;
+        if(mode) setMode(mode);
+      });
+      document.querySelectorAll('.topic-btn').forEach(b=>b.addEventListener('click',e=>{document.querySelectorAll('.topic-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentTopic=b.dataset.topic;startSession();}));
+
+      /* ---------- Start / session logic ---------- */
+      function setMode(mode){currentMode=mode;currentModeLabel.textContent = mode==='quiz' ? 'Quiz' : mode==='flash' ? 'Flashcards' : 'Rapid-Fire';startSession();}
+
+      function startSession(){
+        // prepare pool
+        pool = currentTopic === 'all' ? ALL_QUESTIONS.slice() : ALL_QUESTIONS.filter(q=>q.topic===currentTopic);
+        pool = shuffle(pool);
+        currentIndex = 0;score=0;streak=0;answered=false;updateScore();endScreen.classList.remove('show');document.getElementById('mainCard').style.display='block';
+        if(currentMode==='rapid'){pool = pool.slice(0, Math.min(12,pool.length))}
+        updateUIForMode();
+        renderQuestion();
+      }
+
+      // reviewSet persistence
+      function loadReviewSet(){
+        try{
+          const r = JSON.parse(localStorage.getItem('bb_review')||'[]');
+          reviewSet = new Set(r);
+        }catch(e){reviewSet = new Set();}
+      }
+      function saveReviewSet(){
+        localStorage.setItem('bb_review', JSON.stringify([...reviewSet]));
+      }
+      // mark for review visual helper
+      function showMarked(){ if(reviewSet.size>0) { document.getElementById('finalFraction').textContent = `${[...reviewSet].length} items marked for review`; } }
+      loadReviewSet();
+
+      function updateUIForMode(){
+        document.getElementById('currentMode').textContent = currentMode === 'quiz' ? 'Quiz' : currentMode==='flash'?'Flashcards':'Rapid-Fire';
+        if(currentMode==='flash'){
+          answersGrid.style.display='none';flashcardArea.style.display='block';nextBtn.style.display='none';
+        } else {answersGrid.style.display='grid';flashcardArea.style.display='none';nextBtn.style.display='none'}
+      }
+
+      /* ---------- Render / interaction ---------- */
+      function renderQuestion(){
+        feedback.className='feedback';feedback.textContent='';
+        if(currentIndex>=pool.length){showEnd();return}
+        const q = pool[currentIndex];
+        const total = pool.length;
+        topicLabel.textContent = q.topic.charAt(0).toUpperCase()+q.topic.slice(1);
+        questionNum.textContent = `Question ${currentIndex+1}`;
+        qCounter.textContent = `Question ${currentIndex+1} of ${total}`;
+        progressBar.style.width = `${Math.round((currentIndex/total)*100)}%`;
+        if(currentMode==='flash'){
+          flashcardInner.textContent = q.q;
+          return;
+        }
+
+        // Quiz / Rapid
+        questionText.textContent = q.q;
+        answersGrid.innerHTML='';
+        const answers = q.a.map((t,i)=>({t,i}));
+        const shuffled = shuffle(answers);
+        shuffled.forEach(({t,i})=>{
+          const btn = document.createElement('button');btn.className='answer-btn';btn.textContent = t;btn.onclick = ()=>handleAnswer(i===q.correct, q, btn);
+          answersGrid.appendChild(btn);
+        });
+        answered=false;nextBtn.style.display='none';
+      }
+
+      function handleAnswer(isCorrect,q,btn){
+        if(answered) return;answered=true;
+        // disable others
+        document.querySelectorAll('.answer-btn').forEach(b=>b.disabled=true);
+        if(isCorrect){btn.classList.add('correct');score+=10;streak++;updateScore();showFeedback(true,q.explanation); // push q to end as spaced repetition simple logic
+          pool.push(q);
+        } else {btn.classList.add('wrong');streak=0;reviewSet.add(q.q); saveReviewSet(); updateScore();showFeedback(false,q.explanation); // requeue sooner
+          pool.splice(Math.min(currentIndex+2,pool.length),0,q);
+        }
+        currentIndex++;
+        progressBar.style.width = `${Math.round((currentIndex/pool.length)*100)}%`;
+        nextBtn.style.display='inline-block';
+      }
+
+      function showFeedback(correct, text){
+        feedback.className = 'feedback show '+(correct?'correct':'wrong');
+        feedback.textContent = (correct? '✅ Right — ':'❌ Not quite — ') + text;
+      }
+
+      nextBtn.addEventListener('click',()=>renderQuestion());
+      skipBtn.addEventListener('click',()=>{ // skip moves current question to end
+        const q=pool[currentIndex];pool.push(q);currentIndex++;renderQuestion();});
+      hintBtn.addEventListener('click',()=>{const q=pool[currentIndex];if(q && q.hint){feedback.className='feedback show';feedback.textContent='💡 Hint: '+q.hint}else{feedback.className='feedback show';feedback.textContent='No hint available.'}});
+
+      // Flashcard flip/mark
+      flipBtn && flipBtn.addEventListener('click',()=>{
+        const q = pool[currentIndex]; if(!q) return;
+        if(flashcardInner.textContent===q.q){flashcardInner.textContent = q.a[q.correct] + '\n\n' + (q.explanation||'') ; flipBtn.textContent='Show Q';} else {flashcardInner.textContent=q.q;flipBtn.textContent='Flip'}
+      });
+  markBtn && markBtn.addEventListener('click',()=>{const q=pool[currentIndex];if(q){reviewSet.add(q.q);saveReviewSet();showMarked();feedback.className='feedback show';feedback.textContent='🔖 Marked for review.'}});
+
+      restartBtn.addEventListener('click',()=>startSession());
+
+      function updateScore(){scoreDisplay.textContent = score}
+
+      function showEnd(){document.getElementById('mainCard').style.display='none';endScreen.classList.add('show');finalScore.textContent = score+' pts';finalFraction.textContent = `${[...reviewSet].length} items marked for review`}
+
+      /* ---------- Small UX: keyboard support ---------- */
+      window.addEventListener('keydown',e=>{
+        if(e.key===' ' && currentMode==='flash'){e.preventDefault();flipBtn.click();}
+        if(e.key==='ArrowRight'){nextBtn.click();}
+      });
+
+      /* ---------- Bubbles and confetti helpers ---------- */
+      function makeBubbles(){
+        if(document.documentElement.classList.contains('reduced-motion')) return;
+        for(let i=0;i<12;i++){const b=document.createElement('div');b.className='bubble';const size=10+Math.random()*50;b.style.width=size+'px';b.style.height=size+'px';b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(8+Math.random()*14)+'s';b.style.animationDelay=(Math.random()*6)+'s';document.body.appendChild(b);setTimeout(()=>b.remove(),25000)} }
+      makeBubbles();
+
+      /* ---------- Init ---------- */
+      setMode('quiz');
+      /* ---------- Settings & Timer Persistence + Wiring ---------- */
+      // load settings from localStorage
+      const reduceMotionInput = document.getElementById('reduceMotion');
+      const timerBtnEl = document.getElementById('timerBtn');
+      const timerResetEl = document.getElementById('timerReset');
+      const timerLabel = document.getElementById('timerLabel');
+      let timerSeconds = 15 * 60; // default 15:00
+      let timerInterval = null;
+
+      function loadSettings(){
+        try{
+          const s = JSON.parse(localStorage.getItem('bb_settings') || '{}');
+          if(s.reduceMotion) document.documentElement.classList.add('reduced-motion');
+          reduceMotionInput.checked = !!s.reduceMotion;
+          if(s.timerSeconds) timerSeconds = s.timerSeconds;
+        }catch(e){/* ignore */}
+        updateTimerLabel();
+      }
+
+      function saveSettings(){
+        const s = { reduceMotion: reduceMotionInput.checked, timerSeconds };
+        localStorage.setItem('bb_settings', JSON.stringify(s));
+      }
+
+      reduceMotionInput.addEventListener('change', ()=>{
+        if(reduceMotionInput.checked) document.documentElement.classList.add('reduced-motion');
+        else document.documentElement.classList.remove('reduced-motion');
+        saveSettings();
+      });
+
+      function updateTimerLabel(){
+        const mm = String(Math.floor(timerSeconds/60)).padStart(2,'0');
+        const ss = String(timerSeconds%60).padStart(2,'0');
+        timerLabel.textContent = `${mm}:${ss}`;
+      }
+
+      function startTimer(){
+        if(timerInterval) return; // already running
+        timerBtnEl.textContent = 'Pause';
+        timerInterval = setInterval(()=>{
+          timerSeconds = Math.max(0, timerSeconds - 1);
+          updateTimerLabel();
+          saveSettings();
+          if(timerSeconds === 0){ clearInterval(timerInterval); timerInterval = null; timerBtnEl.textContent='Start'; /* optional end cue */ }
+        },1000);
+      }
+
+      function pauseTimer(){
+        if(timerInterval){ clearInterval(timerInterval); timerInterval = null; timerBtnEl.textContent='Start'; }
+      }
+
+      timerBtnEl.addEventListener('click', ()=>{
+        if(timerInterval) pauseTimer(); else startTimer();
+      });
+      timerResetEl.addEventListener('click', ()=>{ pauseTimer(); timerSeconds = 15*60; updateTimerLabel(); saveSettings(); });
+
+      loadSettings();
+    </script>
+
+  </body>
+  </html>

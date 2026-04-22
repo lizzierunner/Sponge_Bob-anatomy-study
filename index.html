@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -7,68 +6,541 @@
   <title>🧽 Bikini Bottom Anatomy Academy — College Final Mode</title>
   <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    /* ═══════════════════════════════════════════
+       BIKINI BOTTOM ANATOMY ACADEMY — FULL THEME
+    ═══════════════════════════════════════════ */
     :root{
       --ocean:#0077b6;
-      --deep:#023e8a;
+      --deep:#03045e;
+      --mid:#023e8a;
       --aqua:#00b4d8;
+      --aqua-light:#90e0ef;
       --sand:#f4d35e;
+      --sand-dark:#e8c33a;
       --coral:#ee6c4d;
+      --coral-dark:#d94f2e;
       --seaweed:#52b788;
+      --seaweed-dark:#2d8a5e;
+      --pink:#ff6b9d;
+      --purple:#c77dff;
       --white:#ffffff;
       --dark:#0b2545;
+      --card-bg:#fffef5;
     }
+
+    /* ── Reset ── */
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
+    html{scroll-behavior:smooth}
+
+    /* ── Animated underwater background ── */
     body{
-      font-family: 'Nunito', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      background: linear-gradient(180deg,var(--deep) 0%,var(--ocean) 40%,var(--aqua) 100%);
+      font-family:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;
+      background:
+        radial-gradient(ellipse at 20% 110%, #f4d35e44 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 110%, #52b78844 0%, transparent 40%),
+        linear-gradient(180deg,var(--deep) 0%,var(--mid) 35%,var(--ocean) 65%,#0096c7 85%,#48cae4 100%);
+      background-attachment:fixed;
       color:var(--white);
       -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
       min-height:100vh;
-      padding:24px 12px;
+      padding:24px 16px 60px;
+      overflow-x:hidden;
+      position:relative;
     }
 
-    /* reduced motion utility */
+    /* Animated light rays from surface */
+    body::before{
+      content:'';
+      position:fixed;
+      inset:0;
+      background:repeating-linear-gradient(
+        -55deg,
+        transparent 0px,
+        transparent 80px,
+        rgba(255,255,255,0.03) 80px,
+        rgba(255,255,255,0.03) 120px
+      );
+      pointer-events:none;
+      animation:rays 8s ease-in-out infinite alternate;
+    }
+    @keyframes rays{
+      from{transform:translateX(-30px) skewX(-2deg)}
+      to{transform:translateX(30px) skewX(2deg)}
+    }
+
+    /* Sandy ocean floor */
+    body::after{
+      content:'🐚🌊🐠🦀🐡🌊🐙🦑🐟🌊🦐🐚';
+      position:fixed;
+      bottom:0; left:0; right:0;
+      font-size:22px;
+      letter-spacing:8px;
+      padding:8px 16px;
+      background:linear-gradient(0deg,#c9a84c,#e8c33a,#f4d35e);
+      text-align:center;
+      border-top:4px solid #c9a84c;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    /* ── Layout container ── */
+    .container{
+      max-width:760px;
+      margin:0 auto;
+      position:relative;
+      z-index:1;
+    }
+
+    /* ── Header ── */
+    header{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:20px;
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .mascot{
+      font-size:56px;
+      filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+      animation:wobble 3s ease-in-out infinite;
+      line-height:1;
+    }
+    @keyframes wobble{
+      0%,100%{transform:rotate(-4deg) scale(1)}
+      50%{transform:rotate(4deg) scale(1.08)}
+    }
+    header h1{
+      font-family:'Titan One',cursive;
+      font-size:clamp(20px,4vw,32px);
+      line-height:1.1;
+      color:var(--sand);
+      text-shadow:
+        3px 3px 0 var(--coral),
+        5px 5px 0 rgba(0,0,0,0.3);
+      letter-spacing:0.5px;
+    }
+    .sub{
+      font-size:13px;
+      font-weight:700;
+      color:var(--aqua-light);
+      margin-top:4px;
+      letter-spacing:0.3px;
+    }
+
+    /* ── Controls bar ── */
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .control{
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.2);
+      border-radius:999px;
+      padding:6px 14px;
+      font-size:13px;
+      font-weight:700;
+      color:var(--white);
+      display:flex;
+      align-items:center;
+      gap:6px;
+      -webkit-backdrop-filter:blur(6px);
+      backdrop-filter:blur(6px);
+    }
+    .mode-select{padding:4px 6px;gap:4px}
+    button.small{
+      background:rgba(255,255,255,0.18);
+      border:1px solid rgba(255,255,255,0.3);
+      color:var(--white);
+      border-radius:999px;
+      padding:5px 12px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      font-family:'Nunito',sans-serif;
+      transition:background 0.2s,transform 0.15s;
+    }
+    button.small:hover{background:rgba(255,255,255,0.32);transform:scale(1.07)}
+    button.small.active-mode{background:var(--sand);color:var(--dark);border-color:var(--sand-dark)}
+
+    /* ── Stats bar ── */
+    .top-stats{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+      font-size:13px;
+      font-weight:800;
+      color:var(--aqua-light);
+    }
+    .right-controls{display:flex;align-items:center;gap:10px}
+    .score-badge{
+      background:linear-gradient(135deg,var(--sand),var(--coral));
+      color:var(--dark);
+      padding:5px 14px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:15px;
+      box-shadow:0 4px 14px rgba(238,108,77,0.4);
+      animation:scorePulse 0.4s ease;
+    }
+    @keyframes scorePulse{from{transform:scale(1.3)}to{transform:scale(1)}}
+    .progress-wrap{
+      width:120px;
+      height:12px;
+      background:rgba(255,255,255,0.2);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.15);
+    }
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--seaweed),var(--aqua),var(--sand));
+      border-radius:999px;
+      transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow:0 0 10px rgba(82,183,136,0.6);
+    }
+
+    /* ── Topic nav ── */
+    .topic-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      margin-bottom:16px;
+    }
+    .topic-btn{
+      background:rgba(255,255,255,0.12);
+      border:1px solid rgba(255,255,255,0.2);
+      color:rgba(255,255,255,0.85);
+      border-radius:999px;
+      padding:6px 14px;
+      font-size:12px;
+      font-weight:800;
+      cursor:pointer;
+      font-family:'Nunito',sans-serif;
+      transition:all 0.2s;
+      -webkit-backdrop-filter:blur(4px);
+      backdrop-filter:blur(4px);
+    }
+    .topic-btn:hover{background:rgba(255,255,255,0.25);transform:translateY(-2px)}
+    .topic-btn.active{
+      background:linear-gradient(135deg,var(--aqua),var(--seaweed));
+      border-color:var(--seaweed);
+      color:#fff;
+      box-shadow:0 4px 14px rgba(82,183,136,0.45);
+      transform:translateY(-2px);
+    }
+
+    /* ── Main card ── */
+    .card{
+      background:linear-gradient(160deg,#fffef5 0%,#fff9e6 50%,#fffbf0 100%);
+      color:var(--dark);
+      border-radius:24px;
+      padding:28px;
+      box-shadow:
+        0 0 0 3px var(--sand),
+        0 0 0 6px var(--coral),
+        0 20px 50px rgba(0,0,0,0.35);
+      min-height:260px;
+      position:relative;
+      overflow:hidden;
+      animation:cardIn 0.45s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(0.96)}to{opacity:1;transform:none}}
+
+    /* Pineapple pattern watermark on card */
+    .card::before{
+      content:'🍍';
+      position:absolute;
+      right:-10px; bottom:-10px;
+      font-size:110px;
+      opacity:0.06;
+      pointer-events:none;
+      transform:rotate(-15deg);
+    }
+
+    /* ── Inside card: header row ── */
+    .flex-between{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+    .topic-label{
+      display:inline-block;
+      background:linear-gradient(135deg,var(--aqua),var(--ocean));
+      color:#fff;
+      padding:4px 12px;
+      border-radius:999px;
+      font-weight:900;
+      font-size:11px;
+      letter-spacing:0.5px;
+      text-transform:uppercase;
+      box-shadow:0 3px 10px rgba(0,119,182,0.35);
+    }
+    .question-num{color:#8b8b9a;font-weight:800;margin-top:5px;font-size:13px}
+    .mode-label{
+      font-size:12px;
+      font-weight:800;
+      background:linear-gradient(135deg,var(--pink),var(--purple));
+      color:#fff;
+      padding:4px 12px;
+      border-radius:999px;
+      box-shadow:0 3px 10px rgba(199,125,255,0.35);
+    }
+
+    /* ── Question text ── */
+    .question-text{
+      font-family:'Titan One',cursive;
+      font-size:clamp(16px,2.8vw,21px);
+      font-weight:400;
+      line-height:1.4;
+      margin:14px 0 20px;
+      color:var(--dark);
+    }
+
+    /* ── Answer buttons ── */
+    .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:580px){.answers{grid-template-columns:1fr}}
+    .answer-btn{
+      background:linear-gradient(135deg,#f0f8ff,#e8f4fd);
+      border:2px solid #c8e6fc;
+      padding:13px 14px;
+      border-radius:14px;
+      font-weight:800;
+      font-size:14px;
+      cursor:pointer;
+      text-align:left;
+      color:var(--dark);
+      font-family:'Nunito',sans-serif;
+      transition:transform 0.18s,box-shadow 0.18s,background 0.2s;
+      line-height:1.35;
+    }
+    .answer-btn:hover:not(:disabled){
+      transform:translateY(-4px) scale(1.02);
+      box-shadow:0 10px 24px rgba(0,119,182,0.18);
+      background:linear-gradient(135deg,#d6eeff,#c3e1fa);
+      border-color:var(--aqua);
+    }
+    .answer-btn.correct{
+      background:linear-gradient(135deg,#c8f7dc,#a8f0c4) !important;
+      border-color:var(--seaweed) !important;
+      box-shadow:0 0 0 3px rgba(82,183,136,0.3),0 8px 20px rgba(82,183,136,0.2) !important;
+      animation:correctBounce 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes correctBounce{0%{transform:scale(0.95)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+    .answer-btn.wrong{
+      background:linear-gradient(135deg,#ffe0d8,#ffc9bb) !important;
+      border-color:#ff8a65 !important;
+      box-shadow:0 0 0 3px rgba(238,108,77,0.25) !important;
+      animation:shake 0.4s ease;
+    }
+    @keyframes shake{
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-6px)}
+      40%{transform:translateX(6px)}
+      60%{transform:translateX(-4px)}
+      80%{transform:translateX(4px)}
+    }
+
+    /* ── Feedback box ── */
+    .feedback{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:14px;
+      font-weight:700;
+      font-size:14px;
+      line-height:1.5;
+      display:none;
+      border-left:5px solid transparent;
+    }
+    .feedback.show{display:block;animation:fadeSlide 0.3s ease}
+    @keyframes fadeSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+    .feedback.correct{
+      background:linear-gradient(135deg,#d4f7e0,#b8f0cc);
+      color:#0d5c30;
+      border-color:var(--seaweed);
+    }
+    .feedback.wrong{
+      background:linear-gradient(135deg,#ffe8e0,#ffd4c7);
+      color:#7a2500;
+      border-color:#ff8a65;
+    }
+    .feedback.show:not(.correct):not(.wrong){
+      background:linear-gradient(135deg,#fff9e0,#fff3c0);
+      color:#5c4400;
+      border-color:var(--sand);
+    }
+
+    /* ── Action buttons ── */
+    .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .mt-14{margin-top:14px}
+    .mt-12{margin-top:12px}
+
+    .primary{
+      background:linear-gradient(135deg,var(--sand),var(--coral));
+      color:#fff;
+      border:none;
+      padding:13px 20px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:14px;
+      cursor:pointer;
+      font-family:'Nunito',sans-serif;
+      box-shadow:0 6px 18px rgba(238,108,77,0.4);
+      transition:transform 0.18s,box-shadow 0.18s;
+      text-shadow:0 1px 3px rgba(0,0,0,0.2);
+    }
+    .primary:hover{
+      transform:translateY(-3px) scale(1.04);
+      box-shadow:0 10px 26px rgba(238,108,77,0.5);
+    }
+    .ghost{
+      background:rgba(0,0,0,0.06);
+      border:1.5px solid rgba(0,0,0,0.12);
+      color:var(--dark);
+      padding:11px 16px;
+      border-radius:14px;
+      font-weight:800;
+      font-size:13px;
+      cursor:pointer;
+      font-family:'Nunito',sans-serif;
+      transition:background 0.18s,transform 0.18s;
+    }
+    .ghost:hover{background:rgba(0,0,0,0.12);transform:translateY(-2px)}
+    .hidden{display:none!important}
+
+    /* ── Flashcard ── */
+    #flashcardArea{display:none}
+    .flashcard{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:180px;
+      font-size:18px;
+      font-weight:800;
+      text-align:center;
+      background:linear-gradient(135deg,#fff9e6,#fffbf2);
+      border:3px dashed var(--sand);
+      border-radius:16px;
+      padding:20px;
+      color:var(--dark);
+      line-height:1.5;
+      cursor:pointer;
+      transition:transform 0.35s,box-shadow 0.3s;
+      white-space:pre-wrap;
+    }
+    .flashcard:hover{transform:scale(1.015);box-shadow:0 10px 30px rgba(244,211,94,0.25)}
+    .card-inner{width:100%;text-align:center}
+
+    /* ── End screen ── */
+    .end-screen{display:none;text-align:center;padding:24px 16px}
+    .end-screen.show{display:block;animation:cardIn 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+    .big-emoji{font-size:72px;margin-bottom:10px;animation:wobble 2s ease-in-out infinite}
+    .end-screen h2{
+      font-family:'Titan One',cursive;
+      font-size:clamp(22px,5vw,34px);
+      color:var(--sand);
+      text-shadow:3px 3px 0 var(--coral),5px 5px 0 rgba(0,0,0,0.15);
+      margin-bottom:10px;
+    }
+    .end-screen p{font-size:16px;font-weight:700;color:var(--dark);opacity:0.85;margin-bottom:14px}
+    .final-score-large{
+      font-family:'Titan One',cursive;
+      font-size:clamp(36px,8vw,60px);
+      background:linear-gradient(135deg,var(--sand),var(--coral));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      line-height:1.1;
+    }
+    .muted{color:#888;font-size:14px;font-weight:700;margin-top:6px}
+
+    /* ── Footer ── */
+    footer{
+      margin-top:24px;
+      text-align:center;
+      color:rgba(255,255,255,0.7);
+      font-size:13px;
+      font-weight:700;
+      padding-bottom:40px;
+    }
+
+    /* ── Floating bubbles ── */
+    .bubble{
+      position:fixed;
+      bottom:-80px;
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,rgba(255,255,255,0.7),rgba(144,224,239,0.25));
+      border:1.5px solid rgba(255,255,255,0.45);
+      pointer-events:none;
+      z-index:0;
+      animation:riseUp linear infinite;
+    }
+    @keyframes riseUp{
+      0%{transform:translateY(0) translateX(0) scale(1);opacity:0.8}
+      50%{transform:translateY(-45vh) translateX(20px) scale(1.04);opacity:0.6}
+      100%{transform:translateY(-100vh) translateX(-10px) scale(0.9);opacity:0}
+    }
+
+    /* ── Confetti ── */
+    .confetti-piece{
+      position:fixed;
+      top:-20px;
+      pointer-events:none;
+      z-index:9999;
+      border-radius:2px;
+      animation:confettiFall linear forwards;
+    }
+    @keyframes confettiFall{
+      0%{transform:translateY(-10px) rotate(0deg);opacity:1}
+      100%{transform:translateY(105vh) rotate(720deg);opacity:0}
+    }
+
+    /* ── Reduced motion ── */
     .reduced-motion *{animation:none !important;transition:none !important}
 
-      /* Main card */
-      .card{background:linear-gradient(180deg,#ffffff 0%, #fbfbff 100%);color:var(--dark);border-radius:18px;padding:22px;box-shadow:0 14px 40px rgba(0,0,0,0.25);min-height:220px}
-      .topic-label{display:inline-block;background:var(--aqua);color:#003;padding:4px 10px;border-radius:999px;font-weight:900;font-size:12px}
-      .question-num{color:#6b7280;font-weight:800;margin-top:6px}
-      .question-text{font-size:20px;font-weight:900;margin:10px 0 18px}
+    /* ── Jellyfish deco (pure CSS, fixed) ── */
+    .jelly{
+      position:fixed;
+      font-size:32px;
+      pointer-events:none;
+      z-index:0;
+      animation:jellyFloat 6s ease-in-out infinite;
+      opacity:0.45;
+      filter:drop-shadow(0 0 8px rgba(255,107,157,0.5));
+    }
+    .jelly:nth-child(1){top:12%;left:3%;animation-delay:0s}
+    .jelly:nth-child(2){top:35%;right:2%;animation-delay:2s}
+    .jelly:nth-child(3){top:58%;left:1.5%;animation-delay:4s;font-size:24px}
+    @keyframes jellyFloat{
+      0%,100%{transform:translateY(0) rotate(-6deg)}
+      50%{transform:translateY(-18px) rotate(6deg)}
+    }
 
-      /* Answers grid */
-      .answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-      @media(max-width:600px){.answers{grid-template-columns:1fr}}
-      .answer-btn{background:#f6f9ff;border:1px solid #e6eefc;padding:12px;border-radius:12px;font-weight:800;cursor:pointer;text-align:left}
-      .answer-btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,0.08)}
-      .answer-btn.correct{background:#d4f7e0;border-color:#52b788}
-      .answer-btn.wrong{background:#ffe6e0;border-color:#ff8a65}
-
-      .feedback{margin-top:12px;padding:12px;border-radius:10px;display:none}
-      .feedback.show{display:block}
-      .feedback.correct{background:#d4f7e0;color:#1a6640}
-      .feedback.wrong{background:#ffe6e0;color:#8b2500}
-
-      .actions{display:flex;gap:8px;margin-top:14px}
-      .primary{background:linear-gradient(135deg,var(--sand),var(--coral));color:#fff;border:none;padding:12px 14px;border-radius:12px;font-weight:900;cursor:pointer}
-      .ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:10px 12px;border-radius:10px;cursor:pointer}
-
-      /* Flashcard */
-      .flashcard{display:flex;align-items:center;justify-content:center;height:200px;font-size:20px;font-weight:800}
-      .card-front,.card-back{backface-visibility:hidden;transition:transform .45s;transform-style:preserve-3d}
-      .card-inner{position:relative}
-
-      /* end screen */
-      .end-screen{display:none;text-align:center;padding:18px}
-      .end-screen.show{display:block}
-
-      footer{margin-top:18px;text-align:center;color:rgba(255,255,255,0.75);font-size:13px}
-    </style>
-  
-  </head>
+    /* ── Patrick starfish deco ── */
+    .patrick{
+      position:fixed;
+      bottom:52px;
+      right:16px;
+      font-size:34px;
+      pointer-events:none;
+      z-index:1;
+      animation:patrickWiggle 5s ease-in-out infinite;
+      opacity:0.7;
+      filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+    @keyframes patrickWiggle{
+      0%,100%{transform:rotate(-8deg) scale(1)}
+      50%{transform:rotate(8deg) scale(1.1)}
+    }
+  </style>
+</head>
   <body>
+    <!-- Decorative jellyfish & Patrick (pure CSS animated, pointer-events none) -->
+    <span class="jelly" aria-hidden="true">🪼</span>
+    <span class="jelly" aria-hidden="true">🪼</span>
+    <span class="jelly" aria-hidden="true">🪼</span>
+    <span class="patrick" aria-hidden="true">⭐</span>
 
     <div class="container">
       <header>
@@ -284,7 +756,8 @@
         if(answered) return;answered=true;
         // disable others
         document.querySelectorAll('.answer-btn').forEach(b=>b.disabled=true);
-        if(isCorrect){btn.classList.add('correct');score+=10;streak++;updateScore();showFeedback(true,q.explanation); // push q to end as spaced repetition simple logic
+        if(isCorrect){btn.classList.add('correct');score+=10;streak++;updateScore();showFeedback(true,q.explanation);
+          launchConfetti(streak>=3?35:18);
           pool.push(q);
         } else {btn.classList.add('wrong');streak=0;reviewSet.add(q.q); saveReviewSet(); updateScore();showFeedback(false,q.explanation); // requeue sooner
           pool.splice(Math.min(currentIndex+2,pool.length),0,q);
@@ -324,6 +797,25 @@
       });
 
       /* ---------- Bubbles and confetti helpers ---------- */
+      function launchConfetti(count=22){
+        if(document.documentElement.classList.contains('reduced-motion')) return;
+        const colors=['#f4d35e','#ee6c4d','#00b4d8','#52b788','#ff6b9d','#c77dff','#ffffff'];
+        for(let i=0;i<count;i++){
+          setTimeout(()=>{
+            const p=document.createElement('div');
+            p.className='confetti-piece';
+            p.style.left=Math.random()*100+'vw';
+            p.style.background=colors[Math.floor(Math.random()*colors.length)];
+            p.style.borderRadius=Math.random()>0.5?'50%':'3px';
+            p.style.width=(Math.random()*10+5)+'px';
+            p.style.height=(Math.random()*10+5)+'px';
+            p.style.animationDuration=(Math.random()*1.8+1)+'s';
+            document.body.appendChild(p);
+            setTimeout(()=>p.remove(),3000);
+          },i*45);
+        }
+      }
+
       function makeBubbles(){
         if(document.documentElement.classList.contains('reduced-motion')) return;
         for(let i=0;i<12;i++){const b=document.createElement('div');b.className='bubble';const size=10+Math.random()*50;b.style.width=size+'px';b.style.height=size+'px';b.style.left=(Math.random()*100)+'vw';b.style.animationDuration=(8+Math.random()*14)+'s';b.style.animationDelay=(Math.random()*6)+'s';document.body.appendChild(b);setTimeout(()=>b.remove(),25000)} }
